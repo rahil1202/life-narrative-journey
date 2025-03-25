@@ -45,12 +45,12 @@ const PageContent: React.FC<PageContentProps> = ({
     case 2: // How it works page
       return (
         <div className="prose max-w-none">
-          <h2 className="text-3xl font-serif mb-6">How It Works</h2>
+          {/* <h2 className="text-3xl font-serif mb-6">How It Works</h2>
           <p className="text-lg leading-relaxed mb-6">
             This experience uses a simple but powerful calculation to help you visualize your remaining time and how it might be spent.
           </p>
-          
-          <h3 className="text-xl font-serif mb-2">The Calculation</h3>
+           */}
+          <h2 className="text-3xl font-serif mb-2">The Calculation</h2>
           <p className="mb-6">
             Based on your date of birth and an average life expectancy of 90 years, we calculate how many months you've lived and how many remain. We then estimate how those months are typically allocated:
           </p>
@@ -88,25 +88,14 @@ const PageContent: React.FC<PageContentProps> = ({
               <p className="text-sm">Eating, chores, errands, basic social activities (about 4 hours daily)</p>
             </div>
           </div>
-          
-          <h3 className="text-xl font-serif mb-2">The Visualization</h3>
-          <p className="mb-4">
-            After inputting your information, you'll see a grid representing all months of your potential 90-year lifespan. Each dot represents one month, color-coded to show how that time is typically allocated.
-          </p>
-          <p className="mb-4">
-            The white dots represent your truly "free" time—moments you can fully control and intentionally invest in what matters most to you.
-          </p>
-          <p className="text-sm italic">
-            Note: These calculations are approximations and will vary based on individual circumstances. The purpose is to provide perspective, not precise predictions.
-          </p>
         </div>
       );
     
     case 3: // User input form
       return (
         <div className="prose max-w-none">
-          <h2 className="text-3xl font-serif mb-6">Your Life Details</h2>
-          <p className="text-lg mb-8">
+          <h2 className="text-3xl font-serif mb-2">Your Life Details</h2>
+          <p className="text-lg mb-4">
             To calculate your life timeline, please provide the following information:
           </p>
           

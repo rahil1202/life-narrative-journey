@@ -39,7 +39,7 @@ const UserInputForm: React.FC<UserInputFormProps> = ({
   const formattedDate = format(lifeData.dateOfBirth, 'yyyy-MM-dd');
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div className="space-y-2">
         <label className="block text-sm font-medium">
           Date of Birth

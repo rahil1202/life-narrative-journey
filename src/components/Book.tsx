@@ -9,7 +9,7 @@ interface BookProps {
 }
 
 const DEFAULT_LIFE_DATA: LifeData = {
-  dateOfBirth: new Date(1990, 0, 1), // January 1, 1990
+  dateOfBirth: new Date(1990, 0, 1),
   sleepHours: 8,
   careerType: 'office',
   targetAge: 90
@@ -21,11 +21,12 @@ const Book: React.FC<BookProps> = ({ className }) => {
   const [lifeData, setLifeData] = useState<LifeData>(DEFAULT_LIFE_DATA);
   const [lifeStats, setLifeStats] = useState<LifeStats | null>(null);
   const [showCalculation, setShowCalculation] = useState(false);
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [flipDirection, setFlipDirection] = useState<'right' | 'left'>('right');
   
   const totalPages = 6; // Cover + 5 content pages
   
   useEffect(() => {
-    // Calculate life statistics when lifeData changes or calculation is triggered
     if (showCalculation) {
       const stats = calculateLifeStats(lifeData);
       setLifeStats(stats);
@@ -35,27 +36,47 @@ const Book: React.FC<BookProps> = ({ className }) => {
   const handleOpenBook = () => {
     if (!isOpen) {
       setIsOpen(true);
-      setTimeout(() => setCurrentPage(1), 1500); // Wait for cover to open
+      setIsFlipping(true);
+      setFlipDirection('right');
+      setTimeout(() => {
+        setCurrentPage(1);
+        setIsFlipping(false);
+      }, 700);
     }
   };
   
   const goToNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(prev => prev + 1);
+    if (currentPage < totalPages - 1 && !isFlipping) {
+      setIsFlipping(true);
+      setFlipDirection('right');
+      setTimeout(() => {
+        setCurrentPage(prev => prev + 1);
+        setIsFlipping(false);
+      }, 700);
     }
   };
   
   const goToPrevPage = () => {
-    if (currentPage > 1) { // Don't go back past page 1 (after cover)
-      setCurrentPage(prev => prev - 1);
-    } else if (currentPage === 1) {
-      // Close the book
-      setCurrentPage(0);
-      setTimeout(() => setIsOpen(false), 1500);
+    if (!isFlipping) {
+      if (currentPage > 1) {
+        setIsFlipping(true);
+        setFlipDirection('left');
+        setTimeout(() => {
+          setCurrentPage(prev => prev - 1);
+          setIsFlipping(false);
+        }, 700);
+      } else if (currentPage === 1) {
+        setIsFlipping(true);
+        setFlipDirection('left');
+        setTimeout(() => {
+          setCurrentPage(0);
+          setIsOpen(false);
+          setIsFlipping(false);
+        }, 700);
+      }
     }
   };
-  
-  const updateLifeData = (newData: Partial<LifeData>) => {
+   const updateLifeData = (newData: Partial<LifeData>) => {
     setLifeData(prev => ({ ...prev, ...newData }));
   };
   
@@ -64,23 +85,49 @@ const Book: React.FC<BookProps> = ({ className }) => {
     goToNextPage(); // Go to visualization page
   };
   
-  const variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
+  const pageFlipVariants = {
+    initial: (direction: 'right' | 'left') => ({ 
+      x: direction === 'right' ? '100%' : '-100%',
+      opacity: 0,
+      rotateY: direction === 'right' ? 90 : -90
+    }),
+    animate: { 
+      x: 0,
+      opacity: 1,
+      rotateY: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 300,
+        damping: 30,
+        duration: 0.7
+      }
+    },
+    exit: (direction: 'right' | 'left') => ({ 
+      x: direction === 'right' ? '-100%' : '100%',
+      opacity: 0,
+      rotateY: direction === 'right' ? -90 : 90,
+      transition: {
+        type: 'spring',
+        stiffness: 300,
+        damping: 30,
+        duration: 0.7
+      }
+    })
   };
 
   return (
     <div className={`perspective ${className} w-full max-w-4xl mx-auto`}>
       <motion.div 
-        initial="hidden"
-        animate="visible"
-        variants={variants}
         className="relative preserve-3d mx-auto"
-        style={{ maxWidth: isOpen ? '900px' : '450px', height: '600px' }}
+        style={{ 
+          maxWidth: isOpen ? '900px' : '450px', 
+          height: '550px',
+          perspective: '1500px'
+        }}
       >
-        {/* Book Cover (closed state) */}
-        <div 
-          className={`book-cover absolute inset-0 flex items-center justify-center transition-transform duration-1500 preserve-3d cursor-pointer rounded-lg overflow-hidden ${
+        {/* Book Cover */}
+        <motion.div 
+          className={`book-cover absolute inset-0 flex items-center justify-center transition-transform duration-1000 preserve-3d cursor-pointer rounded-lg overflow-hidden ${
             isOpen ? 'animate-page-turn' : ''
           }`}
           onClick={handleOpenBook}
@@ -102,54 +149,60 @@ const Book: React.FC<BookProps> = ({ className }) => {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
         
         {/* Book Pages */}
         <AnimatePresence mode='wait'>
-          <motion.div 
-            key={currentPage}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="book-page absolute inset-0 flex rounded-lg overflow-hidden"
-            style={{ 
-              zIndex: isOpen ? 15 : 5,
-              display: isOpen ? 'flex' : 'none',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-            }}
-          >
-            <div className="w-full h-full p-10 overflow-y-auto flex flex-col justify-between bg-gradient-to-br from-book-page to-white">
-              <PageContent 
-                pageNumber={currentPage} 
-                lifeData={lifeData}
-                lifeStats={lifeStats}
-                updateLifeData={updateLifeData}
-                onSubmit={handleSubmitForm}
-              />
-              
-              {/* Navigation buttons */}
-              <div className="flex justify-between mt-8 pt-4 border-t border-gray-200">
-                <button 
-                  onClick={goToPrevPage} 
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors flex items-center"
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  {currentPage === 1 ? 'Close Book' : 'Previous Page'}
-                </button>
+          {isOpen && (
+            <motion.div 
+              key={currentPage}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              custom={flipDirection}
+              variants={pageFlipVariants}
+              className="book-page absolute inset-0 flex rounded-lg overflow-hidden"
+              style={{ 
+                zIndex: 15,
+                transformStyle: 'preserve-3d',
+                backfaceVisibility: 'hidden',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+              }}
+            >
+              <div className="w-full h-full p-10 overflow-y-auto flex flex-col justify-between bg-gradient-to-br from-book-page to-white">
+                <PageContent 
+                  pageNumber={currentPage} 
+                  lifeData={lifeData}
+                  lifeStats={lifeStats}
+                  updateLifeData={updateLifeData}
+                  onSubmit={handleSubmitForm}
+                />
                 
-                {currentPage < totalPages - 1 && (
+                {/* Navigation buttons */}
+                <div className="flex justify-between mt-8 pt-4 border-t border-gray-200">
                   <button 
-                    onClick={goToNextPage} 
-                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors flex items-center"
+                    onClick={goToPrevPage} 
+                    disabled={isFlipping}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors flex items-center disabled:opacity-50"
                   >
-                    Next Page
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    {currentPage === 1 ? 'Close Book' : 'Previous Page'}
                   </button>
-                )}
+                  
+                  {currentPage < totalPages - 1 && (
+                    <button 
+                      onClick={goToNextPage}
+                      disabled={isFlipping} 
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors flex items-center disabled:opacity-50"
+                    >
+                      Next Page
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          )}
         </AnimatePresence>
         
         {/* Back of book (when open) */}

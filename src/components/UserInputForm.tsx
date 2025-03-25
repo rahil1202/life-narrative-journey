@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LifeData } from '../utils/calculations';
 import { format } from 'date-fns';
@@ -15,17 +14,20 @@ const UserInputForm: React.FC<UserInputFormProps> = ({
   onSubmit,
 }) => {
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateLifeData({ dateOfBirth: new Date(e.target.value) });
+    const newDate = new Date(e.target.value);
+    if (!isNaN(newDate.getTime())) { // Check if the date is valid
+      updateLifeData({ dateOfBirth: newDate });
+    }
   };
-  
+
   const handleSleepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateLifeData({ sleepHours: parseInt(e.target.value) });
   };
-  
+
   const handleCareerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     updateLifeData({ careerType: e.target.value });
   };
-  
+
   const handleTargetAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateLifeData({ targetAge: parseInt(e.target.value) });
   };
@@ -34,9 +36,11 @@ const UserInputForm: React.FC<UserInputFormProps> = ({
     e.preventDefault();
     onSubmit();
   };
-  
-  // Format the date for the input value
-  const formattedDate = format(lifeData.dateOfBirth, 'yyyy-MM-dd');
+
+  // Format the date only if it's valid, otherwise use a default
+  const formattedDate = lifeData.dateOfBirth && !isNaN(lifeData.dateOfBirth.getTime())
+    ? format(lifeData.dateOfBirth, 'yyyy-MM-dd')
+    : format(new Date(), 'yyyy-MM-dd'); // Fallback to current date
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
@@ -53,7 +57,7 @@ const UserInputForm: React.FC<UserInputFormProps> = ({
           required
         />
       </div>
-      
+
       <div className="space-y-2">
         <label className="block text-sm font-medium">
           Average Sleep Hours Per Day
@@ -71,7 +75,7 @@ const UserInputForm: React.FC<UserInputFormProps> = ({
           <span className="ml-4 min-w-8 text-center">{lifeData.sleepHours}h</span>
         </div>
       </div>
-      
+
       <div className="space-y-2">
         <label className="block text-sm font-medium">
           Career Type
@@ -91,7 +95,7 @@ const UserInputForm: React.FC<UserInputFormProps> = ({
           <option value="student">Student</option>
         </select>
       </div>
-      
+
       <div className="space-y-2">
         <label className="block text-sm font-medium">
           Target Life Expectancy (Years)
@@ -108,7 +112,7 @@ const UserInputForm: React.FC<UserInputFormProps> = ({
           <span className="ml-4 min-w-8 text-center">{lifeData.targetAge}</span>
         </div>
       </div>
-      
+
       <div className="pt-4">
         <button
           type="submit"

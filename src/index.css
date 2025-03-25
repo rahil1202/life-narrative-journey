@@ -1,0 +1,131 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 10% 98%;
+    --foreground: 20 5% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 5% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 5% 8%;
+
+    --primary: 20 5% 8%;
+    --primary-foreground: 30 10% 98%;
+
+    --secondary: 30 5% 96%;
+    --secondary-foreground: 20 5% 8%;
+
+    --muted: 30 5% 96%;
+    --muted-foreground: 20 5% 40%;
+
+    --accent: 30 5% 96%;
+    --accent-foreground: 20 5% 8%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 30 10% 98%;
+
+    --border: 20 5% 90%;
+    --input: 20 5% 90%;
+    --ring: 20 5% 60%;
+
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23000000' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .perspective {
+    perspective: 1500px;
+  }
+  
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  
+  .book-cover {
+    @apply bg-book-cover text-white rounded-sm shadow-xl;
+    box-shadow: 
+      0 0 5px rgba(0, 0, 0, 0.1),
+      0 5px 10px rgba(0, 0, 0, 0.2),
+      0 15px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .book-page {
+    @apply bg-book-page relative overflow-hidden rounded-sm shadow-md;
+    box-shadow: 
+      0 0 5px rgba(0, 0, 0, 0.05),
+      1px 0 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .book-spine {
+    @apply bg-book-spine absolute left-0 h-full w-8 transform -translate-x-4;
+    box-shadow: 
+      inset -2px 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .glass-panel {
+    @apply bg-white bg-opacity-10 backdrop-blur-md border border-white border-opacity-20 rounded-lg shadow-lg;
+  }
+  
+  .dot {
+    @apply w-4 h-4 rounded-full inline-block m-0.5 transition-all duration-300;
+  }
+  
+  .dot-past {
+    @apply bg-book-dot-past;
+  }
+  
+  .dot-sleep {
+    @apply bg-book-dot-sleep;
+  }
+  
+  .dot-work {
+    @apply bg-book-dot-work;
+  }
+  
+  .dot-routine {
+    @apply bg-book-dot-routine;
+  }
+  
+  .dot-living {
+    @apply bg-book-dot-living;
+  }
+  
+  .dot-free {
+    @apply bg-book-dot-free border border-gray-300;
+  }
+  
+  .input-field {
+    @apply w-full p-3 border border-gray-300 rounded-md font-sans text-sm focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none transition-all duration-200;
+  }
+}
+
+#root {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
